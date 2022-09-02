@@ -6,7 +6,7 @@ const tourRouter = require("./routes/tourRoute");
 const userRouter = require("./routes/userRoute");
 
 //Middlewares
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === 'development') {
     app.use(morgan("dev"));
 };
 app.use(express.json());
