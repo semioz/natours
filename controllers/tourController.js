@@ -1,38 +1,24 @@
 const Tour = require("./../modals/tourModule");
+const APIfeatures = require("./../utils/apiFeatures");
+
+//creating a middleware to get the 5 cheapest tours
+exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = "5";
+    req.query.sortFields = "-ratingsAverage, price";
+    req.query.fields = "name,price,ratingsAverage,summary,difficulty"
+    next();
+};
 
 exports.getAllTours = async(req, res) => {
     try {
-        //BUILD QUERY
-        const queryObj = {...req.query };
-        const excludedFields = ["page", "sort", "limit", "field"];
-        excludedFields.forEach(el => delete queryObj[el]);
-        //ADVANCED FILTERING
-        let queryStr = JSON.stringify(queryObj);
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
-        console.log(JSON.parse(queryStr))
-        let query = Tour.find(JSON.parse(queryStr))
-            //SORTING
-        if (req.query.sort) {
-            //SORT BY MULTIPLE PARAMETERS
-            const sortBy = req.query.sort.split(',').join(' ')
-            console.log(sortBy)
-            query = query.sort(sortBy)
-        } else {
-            //SORT BY CREATED DATE IF USER DOES NOT SPECIFY ANY ARGUMENT
-            query = query.sort("-createdAt");
-        }
-        //FIELD LIMITING
-        if (req.query.fields) {
-            const fields = req.query.fields.split(",").join(" ");
-            query = query.select(fields);
-        } else {
-            query = query.select("-__v");
-        }
+        //EXECUTE QUERY, invoke the class constructor with 'new' !
+        const features = new APIfeatures(Tour.find(), req.query)
+            .filter()
+            .sortFields()
+            .limitFields()
+            .paginate();
+        const tours = await features.query;
 
-
-
-        //EXECUTE QUERY
-        const tours = await query;
         res.status(200).json({
             status: "success",
             time: req.requestTime,
