@@ -1,4 +1,4 @@
-const Tour = require("./../modals/tourModule");
+const Tour = require("./../models/tourModel");
 const APIfeatures = require("./../utils/apiFeatures");
 
 //creating a middleware to get the 5 cheapest tours
@@ -129,7 +129,59 @@ exports.getTourStats = async(req, res) => {
     } catch (err) {
         res.status(404).json({
             status: "fail",
-            message: console.log(err)
+            message: err
+        })
+    }
+};
+
+exports.getMonthlyPlan = async(req, res) => {
+    try {
+        const year = req.params.year * 1;
+        const plan = await Tour.aggregate([{
+                //after implementing unwind, we do have 27 documents instead of 9 documents. because each document has 3 dates.
+                $unwind: "$startDates"
+            },
+            {
+                $match: {
+                    startDates: {
+                        //only show the tours whose "startDates" year is input year.
+                        $gte: new Date(`${year}-01-01`),
+                        $lte: new Date(`${year}-12-31`)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: "$startDates" },
+                    numTourStarts: { $sum: 1 },
+                    tours: { $push: "$name" }
+                }
+            },
+            {
+                $addFields: { month: "$_id" }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            },
+            {
+                $sort: { numTourStarts: -1 }
+            },
+            {
+                $limit: 6
+            }
+        ]);
+        res.status(200).json({
+            status: "success",
+            data:  {
+                plan
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: "fail",
+            message: err
         })
     }
 };

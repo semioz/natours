@@ -4,7 +4,12 @@ const router = express.Router();
 
 router
     .route("/top-5-cheap")
+    //first paramater is a middleware to get the cheapest tours
     .get(tourController.aliasTopTours, tourController.getAllTours)
+
+router
+    .route("/monthly-plan/:year")
+    .get(tourController.getMonthlyPlan)
 
 router
     .route("/tour-stats")
