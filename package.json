@@ -33,6 +33,7 @@
         "morgan": "^1.10.0",
         "nodemon": "^2.0.19",
         "prettier": "^2.7.1",
+        "slugify": "^1.6.5",
         "validator": "^13.7.0"
     }
 }
