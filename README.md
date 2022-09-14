@@ -1,2 +1,2 @@
-# Natours API
-Back-End implementation of a tour company called "Natours", using Node.js, Express.js and MongoDB. Designing the API. MVC architecture.
+# natours api
+back-end implementation of a tour company called "Natours", using node.js, express.js and mongodb. Designing the API. MVC architecture.
