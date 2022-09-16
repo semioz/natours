@@ -1,5 +1,6 @@
 const express = require("express");
 const tourController = require("./../controllers/tourController");
+const authController = require("./../controllers/authController.js");
 const router = express.Router();
 
 router
@@ -17,7 +18,8 @@ router
 
 router
     .route("/")
-    .get(tourController.getAllTours)
+    //the first paramater which is a middleware, will protect this resource from users that not logged in.
+    .get(authController.protect, tourController.getAllTours)
     .post(tourController.createTour)
 
 router

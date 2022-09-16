@@ -33,9 +33,8 @@ exports.login = catchAsync(async(req, res, next) => {
 
     //check if email and password exist
     if (!email || !password) {
-        return next(new AppError("Please provide email and password", 400))
+        return next(new AppError("Please provide an email and a password", 400))
     }
-
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select("+password");
 
@@ -45,7 +44,31 @@ exports.login = catchAsync(async(req, res, next) => {
     //if everything is OK, send the token to the client
     const token = signToken(user._id)
     res.status(200).json({
-        status: "successs",
-        token: token
+        status: "success",
+        token
     })
 });
+
+//created this middleware to see if user is authenticated or not.
+exports.protect = catchAsync(async(req, res, next) => {
+    let token;
+    //get the token and check if its exists
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1]
+    }
+    console.log(token)
+
+    if (!token) {
+        return next(new AppError("You're not logged in! Please log in to get access!", 401))
+    }
+
+    //verify the jwt
+
+
+    //check, if the user of this token, exists
+
+
+    //check if the user has changed his/her password after token was issued
+
+    next();
+})
