@@ -18,7 +18,7 @@ router
 
 router
     .route("/")
-    //the first paramater which is a middleware, will protect this resource from users that not logged in.
+    //the first paramater which is a middleware to protect this resource from users that not logged in.
     .get(authController.protect, tourController.getAllTours)
     .post(tourController.createTour)
 

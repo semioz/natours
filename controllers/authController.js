@@ -1,3 +1,4 @@
+const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync.js");
@@ -14,7 +15,8 @@ exports.signUp = catchAsync(async(req, res, next) => {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
+        passwordConfirm: req.body.passwordConfirm,
+        passwordChangedAt: req.body.passwordChangedAt
     });
 
     const token = signToken(newUser._id)
@@ -63,12 +65,18 @@ exports.protect = catchAsync(async(req, res, next) => {
     }
 
     //verify the jwt
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
 
+    //check if the user of this token, still exists
+    const freshUser = await User.findById(decoded.id)
+    if (!freshUser) {
+        return next(new AppError("The user belonging to this token does not exists!"))
+    }
+    //check if the user has changed his/her password after token was issued(iat = issued at)
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
+        return next(new AppError("User recently changed the password! Please log in!", 401))
+    }
 
-    //check, if the user of this token, exists
-
-
-    //check if the user has changed his/her password after token was issued
-
+    req.user = freshUser;
     next();
-})
+});
