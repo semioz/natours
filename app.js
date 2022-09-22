@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
 
 const AppError = require("./utils/appError.js");
 const globalErrorHandler = require("./controllers/errorController.js");
@@ -10,10 +13,15 @@ const tourRouter = require("./routes/tourRoute");
 const userRouter = require("./routes/userRoute");
 
 //Global Middlewares
+//Set security http headers
+app.use(helmet());
+
+//development logging
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan("dev"));
 };
 
+//limit requests from same API
 const limiter = rateLimit({
     //this will allow 100 request from same api in one hour
     max: 100,
@@ -23,7 +31,18 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-app.use(express.json());
+//body parser
+app.use(express.json({
+    limit: "10kb"
+}));
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+//Data sanitization against XSS attacks
+app.use(xss());
+
+//serving static files
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
@@ -31,7 +50,7 @@ app.use((req, res, next) => {
     next();
 });
 
-//Routes
+//--Routes--
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
