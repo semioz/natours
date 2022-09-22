@@ -18,7 +18,6 @@ router
 router.post("/forgot-password", authController.forgotPassword);
 router.patch("/reset-password/:token", authController.resetPassword);
 
-
 router
     .route("/")
     .get(userController.getAllUsers)
