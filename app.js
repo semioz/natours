@@ -12,6 +12,7 @@ const globalErrorHandler = require("./controllers/errorController.js");
 
 const tourRouter = require("./routes/tourRoute");
 const userRouter = require("./routes/userRoute");
+const reviewRouter = require("./routes/reviewRoute");
 
 //Global Middlewares
 //Set security http headers
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 //--Routes--
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 app.all("*", (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

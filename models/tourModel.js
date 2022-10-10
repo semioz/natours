@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const validator = require("validator");
+const User = require("./userModel.js");
 
 const tourSchema = new mongoose.Schema({
     name: { type: String, required: [true, "A tour must have a name"], unique: true, trim: true, maxlength: [40, "A tour name must have less or equal then 40 characters!"], minlength: [10, "A tour must have more or equal then 10 characters!"] },
@@ -26,7 +26,33 @@ const tourSchema = new mongoose.Schema({
     images: [String],
     createdAt: { type: Date, default: Date.now(), select: false },
     startDates: [Date],
-    secretTour: { type: Boolean, default: false }
+    secretTour: { type: Boolean, default: false },
+    startLocation: {
+        //geoJSON
+        type: {
+            type: String,
+            default: "Point",
+            enum: ["Point"]
+        },
+        coordinates: [Number],
+        address: String,
+        description: String
+    },
+    locations: [{
+        type: {
+            type: String,
+            default: "Point",
+            enum: ["Point"]
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number
+    }],
+    guides: [{
+        type: mongoose.Schema.ObjectId,
+        ref: "User"
+    }]
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -42,16 +68,20 @@ tourSchema.pre("save", function(next) {
     next()
 });
 
-//tourSchema.pre("save", function(next) {
-//    console.log("will save document...")
-//    next()
-//});
+//tourSchema.pre("save", async function(next) {
+//    const guidesPromises = this.guides.map(id => User.findById(id))
+//
+//    this.guides = await Promise.all(guidesPromises)
+//    next();
+//})
 
-//POST middleware is the process after saving a document to database.
-//tourSchema.post("save", function(doc, next) {
-//    console.log(doc)
-//    next()
-//});
+tourSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: "guides",
+        select: "-__v -passwordChangedAt"
+    })
+    next();
+});
 
 //QUERY MIDDLEWARE: runs before the query
 tourSchema.pre(/^find/, function(next) {

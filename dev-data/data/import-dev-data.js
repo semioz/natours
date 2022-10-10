@@ -1,7 +1,7 @@
 const fs = require("fs");
 const dotenv = require('dotenv');
 const mongoose = require("mongoose");
-const Tour = require("./../../modals/tourModule");
+const Tour = require("./../../models/tourModel.js");
 
 dotenv.config({ path: './config.env' });
 
@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGO_URI, {
         console.log(err)
     })
     //READ THE JSON FILE
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8"));
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
 
 //IMPORT DATA INTO DB
 const importData = async() => {
