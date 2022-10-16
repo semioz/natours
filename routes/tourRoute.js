@@ -13,7 +13,7 @@ router.use("/:tourId:reviews", reviewRouter)
 
 router
     .route("/monthly-plan/:year")
-    .get(tourController.getMonthlyPlan)
+    .get(authController.protect, authController.restricTo("admin", "lead-guide", "guide"), tourController.getMonthlyPlan)
 
 router
     .route("/tour-stats")
@@ -21,14 +21,13 @@ router
 
 router
     .route("/")
-    //the first paramater which is a middleware to protect this resource from users that not logged in.
-    .get(authController.protect, tourController.getAllTours)
-    .post(tourController.createTour)
+    .get(tourController.getAllTours)
+    .post(authController.protect, authController.restricTo("admin", "lead-guide"), tourController.createTour)
 
 router
     .route("/:id")
     .get(tourController.getTour)
     .delete(authController.protect, authController.restricTo("admin", "lead-guide"), tourController.deleteTour)
-    .patch(tourController.updateTour)
+    .patch(authController.protect, authController.restricTo("admin", "lead-guide"), tourController.updateTour)
 
 module.exports = router;
