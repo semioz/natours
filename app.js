@@ -64,7 +64,7 @@ app.use((req, res, next) => {
     next();
 });
 
-//--Routes--
+//----Routes----
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
