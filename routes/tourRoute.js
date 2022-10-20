@@ -16,6 +16,10 @@ router
     .get(authController.protect, authController.restricTo("admin", "lead-guide", "guide"), tourController.getMonthlyPlan)
 
 router
+    .route("/tours-within/:distance/center/:latlng/unit/:unit")
+    .get(tourController.getToursWithin);
+
+router
     .route("/tour-stats")
     .get(tourController.getTourStats)
 
