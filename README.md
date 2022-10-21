@@ -8,4 +8,5 @@ Back-End implementation of a tour company called "Natours", using Node.js, Expre
 * [Express.js](http://expressjs.com/)
 * [Postman](https://www.getpostman.com/)
 * [Mongoose](https://mongoosejs.com/)
+* [Pug](https://mongoosejs.com/)
 * [JSON Web Token](https://jwt.io/)

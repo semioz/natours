@@ -53,11 +53,11 @@ exports.getOne = (Model, popOptions) => catchAsync(async(req, res, next) => {
     })
 });
 
-exports.getAll = Model => catchAsync(async(req, res) => {
+exports.getAll = Model => catchAsync(async(req, res, next) => {
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId }
         //EXECUTE QUERY, invoke the class constructor with 'new' !
-    const features = new APIfeatures(Model.find(), req.query)
+    const features = new APIfeatures(Model.find(filter), req.query)
         .filter()
         .sortFields()
         .limitFields()
