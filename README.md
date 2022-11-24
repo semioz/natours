@@ -5,7 +5,7 @@ Back-End implementation of a tour company called "Natours", using Node.js, Expre
 
 * [Node.js](https://nodejs.org/en/)
 * [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-* [Redis](redis.com)
+* [Redis](www.redis.com)
 * [Express.js](http://expressjs.com/)
 * [Postman](https://www.getpostman.com/)
 * [Mongoose](https://mongoosejs.com/)
